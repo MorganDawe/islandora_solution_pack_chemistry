@@ -10,7 +10,7 @@ define('ISLANDORA_CHEM_SP_MADS_FORM_NAME', 'Islandora Chem MADS Form');
 
 /**
  * Declare the objects that are required by this solution pack
- * @return type 
+ * @return type
  */
 function islandora_chem_sp_required_fedora_objects() {
 
@@ -127,7 +127,7 @@ function islandora_chem_sp_required_fedora_objects() {
 
 /**
  * Create the callbacks for each of the pages
- * @return array 
+ * @return array
  */
 function islandora_chem_sp_menu() {
   $items = array();
@@ -247,7 +247,7 @@ function islandora_chem_sp_menu() {
   return $items;
 }
 
-function islandora_chem_sp_perm() {
+function islandora_chem_sp_permission() {
   return array(
     'structure search',
   );
@@ -288,13 +288,13 @@ function islandora_chem_sp_block($op = 'list', $delta = 0, $edit = array()) {
 
       $blocks[1]['info'] = t('Ingest block');
       $blocks[1]['cache'] = BLOCK_NO_CACHE;
-      
+
       $blocks[2]['info'] = t('My files');
       $blocks[2]['cache'] = BLOCK_NO_CACHE;
-      
+
       $blocks[3]['info'] = t('People');
       $blocks[3]['cache'] = BLOCK_NO_CACHE;
-      
+
       $blocks[4]['info'] = t('Groups');
       $blocks[4]['cache'] = BLOCK_NO_CACHE;
 
@@ -332,7 +332,7 @@ function islandora_chem_sp_block($op = 'list', $delta = 0, $edit = array()) {
 
         $block['content'] = drupal_get_form('islandora_chem_sp_group_form');
       }
-      
+
       return $block;
   }
 }
@@ -373,9 +373,9 @@ function islandora_chem_sp_form_alter(&$form, &$form_state, $form_id) {
 function islandora_chem_sp_mail_alter(&$message) {
   switch ($message['id']) {
     case "user_register_admin_created":
-    case "user_register_no_approval_required": 
+    case "user_register_no_approval_required":
     case "user_register_pending_approval":
-    case "user_password_reset": 
+    case "user_password_reset":
     case "user_status_activated":
     case "user_status_blocked":
     case "user_status_deleted":

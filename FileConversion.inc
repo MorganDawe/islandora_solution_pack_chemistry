@@ -42,7 +42,7 @@ function clean_XYZ($file) {
  * @global type $user
  * @param type $directory
  * @param type $do_not_add
- * @return type 
+ * @return type
  */
 function unzip_files($directory, $do_not_add) {
 
@@ -69,7 +69,7 @@ function unzip_files($directory, $do_not_add) {
  * Given a chemical structure file, create a basic MODS record
  * based on the name of the file and the watch folder that it
  * was foudn in
- * @param type $file 
+ * @param type $file
  */
 function create_mods($file) {
   $mods = <<<MODS
@@ -119,7 +119,7 @@ function check_numeric($str) {
  * Replace positive and negative charges with the correct, shortened version
  * and add HTML tags to make them superscript
  * @param type $formula
- * @return type 
+ * @return type
  */
 function formula_cleanup($formula) {
   $formula2 = str_replace(' ', '', $formula);
@@ -195,7 +195,7 @@ function stripos_multi($haystack, $needle, $offset = '0') {
   return FALSE;
 }
 
-//function  
+//function
 
 class SyntaxHighlight {
 
@@ -221,7 +221,7 @@ class SyntaxHighlight {
                 \d+
             )(?!\w)/ix'
       => '<span class="N">$1</span>',
-      // Make the bold assumption that an all uppercase word has a 
+      // Make the bold assumption that an all uppercase word has a
       // special meaning
       '/(?<!\w|>)(
                 [A-Z_0-9]{2,}
@@ -250,16 +250,16 @@ class SyntaxHighlight {
     // Paste the comments and strings back in again
     $s = str_replace(array_keys($tokens), array_values($tokens), $s);
 
-    // Delete the "Escaped Backslash Workaround Token" (TM) and replace 
+    // Delete the "Escaped Backslash Workaround Token" (TM) and replace
     // tabs with four spaces.
     $s = str_replace(array('<e>', "\t"), array('', '    '), $s);
 
     return '<pre>' . $s . '</pre>';
   }
 
-  // Regexp-Callback to replace every comment or string with a uniqid and save 
+  // Regexp-Callback to replace every comment or string with a uniqid and save
   // the matched text in an array
-  // This way, strings and comments will be stripped out and wont be processed 
+  // This way, strings and comments will be stripped out and wont be processed
   // by the other expressions searching for keywords etc.
   private static function replaceId(&$a, $match) {
     $id = "##r" . uniqid() . "##";
@@ -429,11 +429,11 @@ function islandora_chem_sp_convert_spartan_output($file) {
   global $base_path;
   global $base_url;
   $file_array = array_values(array_filter(array_map('trim', file($file))));
-//  var_dump($file_array);  
+//  var_dump($file_array);
   $coords_header = array_search("Atom            X             Y             Z", $file_array, TRUE);
   $start = ($coords_header + 2);
 
-  $end = islandora_chem_sp_array_search("Point Group =", $file_array);
+  $end = islandora_chem_sp_array_search_inside("Point Group =", $file_array);
 
   $length = $end - $start;
 
@@ -471,7 +471,7 @@ function islandora_chem_sp_url_exists($url) {
   }
   curl_setopt($handle, CURLOPT_HEADER, FALSE);
   curl_setopt($handle, CURLOPT_FAILONERROR, TRUE);  // this works
-  curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15")); // request as if Firefox    
+  curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15")); // request as if Firefox
   curl_setopt($handle, CURLOPT_NOBODY, TRUE);
   curl_setopt($handle, CURLOPT_RETURNTRANSFER, FALSE);
   $connectable = curl_exec($handle);
@@ -479,7 +479,7 @@ function islandora_chem_sp_url_exists($url) {
   return $connectable;
 }
 
-function islandora_chem_sp_array_search($needle = NULL, $haystack_array = NULL, $skip = 0) {
+function islandora_chem_sp_array_search_inside($needle = NULL, $haystack_array = NULL, $skip = 0) {
   if ($needle == NULL || $haystack_array == NULL)
     die('$needle and $haystack_array are mandatory for functie my_array_search()');
   foreach ($haystack_array as $key => $eval) {
@@ -507,13 +507,13 @@ function islandora_chem_sp_object_profile($pid) {
   }
   $owner_xml = $object->xpath('//arr[@name="fgs.ownerId"]');
   $item['owner'] = (string) $owner_xml[0]->str;
-  
+
  return $item;
-  
+
 }
 
 function islandora_chem_sp_get_uid($username)
-{    
+{
     // Function that returns the uid based on the username given
     $user = db_fetch_object(db_query("SELECT uid FROM users WHERE name='$username'"));
 
