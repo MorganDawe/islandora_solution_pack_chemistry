@@ -463,21 +463,21 @@ function clean_XYZ($file) {
 //   return $new_file;
 // }
 
-// function islandora_chem_sp_url_exists($url) {
-//   // Version 4.x supported
-//   $handle = curl_init($url);
-//   if (FALSE === $handle) {
-//     return FALSE;
-//   }
-//   curl_setopt($handle, CURLOPT_HEADER, FALSE);
-//   curl_setopt($handle, CURLOPT_FAILONERROR, TRUE);  // this works
-//   curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15")); // request as if Firefox
-//   curl_setopt($handle, CURLOPT_NOBODY, TRUE);
-//   curl_setopt($handle, CURLOPT_RETURNTRANSFER, FALSE);
-//   $connectable = curl_exec($handle);
-//   curl_close($handle);
-//   return $connectable;
-// }
+function islandora_chemistry_url_exists($url) {
+  // Version 4.x supported
+  $handle = curl_init($url);
+  if (FALSE === $handle) {
+    return FALSE;
+  }
+  curl_setopt($handle, CURLOPT_HEADER, FALSE);
+  curl_setopt($handle, CURLOPT_FAILONERROR, TRUE);  // this works
+  curl_setopt($handle, CURLOPT_HTTPHEADER, Array("User-Agent: Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.15) Gecko/20080623 Firefox/2.0.0.15")); // request as if Firefox
+  curl_setopt($handle, CURLOPT_NOBODY, TRUE);
+  curl_setopt($handle, CURLOPT_RETURNTRANSFER, FALSE);
+  $connectable = curl_exec($handle);
+  curl_close($handle);
+  return $connectable;
+}
 
 // function islandora_chem_sp_array_search($needle = NULL, $haystack_array = NULL, $skip = 0) {
 //   if ($needle == NULL || $haystack_array == NULL)

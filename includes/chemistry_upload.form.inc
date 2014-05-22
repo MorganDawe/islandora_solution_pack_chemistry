@@ -114,12 +114,12 @@ function islandora_chemistry_simple_ingest($file_name, $mime, $separate = TRUE) 
   }
 
   $success = IslandoraOBabel::chem2cml('OBJ', $file_name, $ext);
-  if ($success) {
-    dsm($success, "success");
-  }
-  else {
-    dsm(array(), "everyone gets a nope!!!");
-  }
+  //if ($success) {
+  dsm($success, "success");
+//   }
+//   else {
+//     dsm(array(), "everyone gets a nope!!!");
+//   }
 
 
 //   $file_name_array = array();
