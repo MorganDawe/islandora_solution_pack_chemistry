@@ -95,97 +95,51 @@ function islandora_chemistry_upload_form_submit(array $form, array &$form_state)
       $tn->mimetype = $tn_file->filemime;
     }
   }
-  islandora_chemistry_simple_ingest($chem_path, $ds->mimetype);
+  islandora_chemistry_simple_ingest($object, $chem_path, $ds->mimetype);
 }
 
-function islandora_chemistry_simple_ingest($file_name, $mime, $separate = TRUE) {
+function islandora_chemistry_simple_ingest($fedora_object, $file_name, $mime, $separate = TRUE) {
   module_load_include('inc', 'islandora_chemistry', 'includes/islandora_chemistry');
   module_load_include('inc', 'islandora', 'includes/mime_detect');
 
+  $file_name_array = array();
+
+  $mol = IslandoraOBabel::chem2mol('MOL', $file_name, 'mol');
+  if ($mol != 1) {
+    drupal_set_message(t("Creating an archival version of $file_name failed!"), 'error');
+    return;
+  }
+  $file_name_array['MOL'] = $_SESSION['fedora_ingest_files']['MOL'];
+  $cml = IslandoraOBabel::chem2cml('CML', $file_name, 'xml', $separate);
+  if ($cml != 1) {
+    drupal_set_message(t("Extracting metadata from $file_name failed!"), 'error');
+    return;
+  }
+  $file_name_array['CML'] = $_SESSION['fedora_ingest_files']['CML'];
+
+  $jpg = IslandoraOBabel::chem2jpg(array('width' => '100', 'height' => '100'), 'TN', $file_name, 'jpg', $fedora_object);
+  if ($jpg != 1) {
+    drupal_set_message(t("Creating the thumbnail for $file_name failed!"), 'error');
+    return;
+  }
+  $file_name_array['TN'] = $_SESSION['fedora_ingest_files']['TN'];
+  $medium = IslandoraOBabel::chem2jpg(array('width' => '250', 'height' => '250'), 'MEDIUM', $file_name, 'jpg', $fedora_object);
+  if ($medium != 1) {
+    drupal_set_message(t("Creating an image of $file_name failed!"), 'error');
+    return;
+  }
+
+  $file_name_array['MEDIUM'] = $_SESSION['fedora_ingest_files']['MEDIUM'];
   $mime_detect = new MimeDetect();
-  $ext = $mime_detect->getExtension($mime);
+  // Build datastreams.
+  foreach ($file_name_array as $key => $value) {
+    $ds = $fedora_object->constructDatastream($key, 'M');
+    $path = drupal_realpath($value);
+    $str = $mime_detect->getMimetype($value);
 
-  $success = IslandoraOBabel::chem2mol('OBJ', $file_name, $ext);
-  if ($success) {
-    dsm($success, "success");
+    $ds->label = "$key file.";
+    $ds->mimetype = $str;
+    $ds->setContentFromFile($path, FALSE);
+    $fedora_object->ingestDatastream($ds);
   }
-  else {
-    dsm(array(), "everyone gets a nope!!!");
-  }
-
-  $success = IslandoraOBabel::chem2cml('OBJ', $file_name, $ext);
-  //if ($success) {
-  dsm($success, "success");
-//   }
-//   else {
-//     dsm(array(), "everyone gets a nope!!!");
-//   }
-
-
-//   $file_name_array = array();
-//   $file_name_array['OBJ'] = $file_name;
-
-//   $title =  basename($file_name);
-
-//   $transform = drupal_get_path('module', 'islandora_content_model_forms') . "/transforms/mods_to_dc.xsl";
-//   $content_model_pid = 'islandora:sp_chem_CM';
-//   $collection_pid = 'quantumchem:sp_chem_calculations';
-//   $dsid = 'MODS';
-//   $pid = Fedora_Item::get_next_PID_in_namespace('quantumchem');
-//   $username = $user->name;
-//   $xml = "<mods xmlns=\"http://www.loc.gov/mods/v3\">
-//   <titleInfo>
-//     <title>$title</title>
-//   </titleInfo>
-//   <name type=\"personal\">
-//     <namePart>$username</namePart>
-//     <role>
-//       <roleTerm authority=\"marcrelator\" type=\"text\">Author</roleTerm>
-//     </role>
-//   </name>
-// </mods>";
-
-//   $document = new DOMDocument();
-//   $document->loadXML($xml);
-//   $document2 = $document->saveXML();
-//   $document3 = new DOMDocument();
-//   $document3->loadXML($document2);
-
-//   $collection_policy = CollectionPolicy::loadFromCollection($collection_pid);
-//   if ($collection_policy !== FALSE) {
-//     $relationship = $collection_policy->getRelationship();
-//   }
-
-//   $ingest = new IslandoraChem($pid);
-//   $mol = $ingest->chem2mol(NULL, 'MOL', $file_name, 'mol');
-//   if ($mol != 1) {
-//     drupal_set_message(t("Creating an archival version of $file_name failed!"), 'error');
-//     return;
-//   }
-//   $file_name_array['MOL'] = $_SESSION['fedora_ingest_files']['MOL'];
-//   $cml = $ingest->chem2cml(NULL, 'CML', $file_name, 'xml', $separate);
-//   if ($cml != 1) {
-//     drupal_set_message(t("Extracting metadata from $file_name failed!"), 'error');
-//     return;
-//   }
-//   $file_name_array['CML'] = $_SESSION['fedora_ingest_files']['CML'];
-
-//   $jpg = $ingest->chem2jpg(array('width' => '100', 'height' => '100'), 'TN', $file_name, 'jpg');
-//   if ($jpg != 1) {
-//     drupal_set_message(t("Creating the thumbnail for $file_name failed!"), 'error');
-//     return;
-//   }
-//   $file_name_array['TN'] = $_SESSION['fedora_ingest_files']['TN'];
-//   $medium = $ingest->chem2jpg(array('width' => '250', 'height' => '250'), 'MEDIUM', $file_name, 'jpg');
-//   if ($medium != 1) {
-//     drupal_set_message(t("Creating an image of $file_name failed!"), 'error');
-//     return;
-//   }
-
-//   $file_name_array['MEDIUM'] = $_SESSION['fedora_ingest_files']['MEDIUM'];
-//   $object = new FOXML($title, $pid, $dsid, $content_model_pid, $collection_pid, $relationship, $file_name_array, $document3, $transform);
-//   $submit = $object->ingest();
-//   if (!$submit) {
-//     drupal_set_message(t("An error occurred when saving the file!"), 'error');
-//   }
 }
